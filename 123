@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>智慧出行卫士</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { 
+            background: #2196F3; 
+            color: white; 
+            padding: 10px; 
+            border: none; 
+            margin: 5px; 
+            cursor: pointer;
+        }
+        #loading {
+            color: #666;
+            font-style: italic;
+        }
+        #error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧出行卫士</h1>
+    <div id="loading">网页版加载中...（首次加载可能需要10-30秒）</div>
+    <div id="error"></div>
+    
+    <script>
+        async function main() {
+            try {
+                const loadingElement = document.getElementById("loading");
+                loadingElement.textContent = "正在加载Pyodide运行时...";
+                
+                let pyodide = await loadPyodide({
+                    stdout: text => {
+                        loadingElement.textContent += "\n" + text;
+                    },
+                    stderr: text => {
+                        document.getElementById("error").style.display = "block";
+                        document.getElementById("error").textContent += "\n" + text;
+                    }
+                });
+                
+                loadingElement.textContent += "\n正在加载Pillow包...";
+                await pyodide.loadPackage(["Pillow"]);
+                
+                loadingElement.textContent += "\n正在初始化Python环境...";
+                await pyodide.runPythonAsync(`
+                    from PIL import Image
+                    print("Python环境初始化完成！")
+                `);
+                
+                document.body.innerHTML = `
+                    <h1>智慧出行卫士</h1>
+                    <button onclick="alert('功能需进一步开发')">生成安全地图</button>
+                    <p>完整功能正在适配网页版...</p>
+                `;
+            } catch (error) {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("error").style.display = "block";
+                document.getElementById("error").textContent = `加载失败: ${error.message}`;
+            }
+        }
+        
+        // 添加加载指示器
+        document.addEventListener('DOMContentLoaded', () => {
+            main().catch(error => {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("error").style.display = "block";
+                document.getElementById("error").textContent = `初始化失败: ${error.message}`;
+            });
+        });
+    </script>
+</body>
+</html>
