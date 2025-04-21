@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>智慧出行卫士</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { background: #2196F3; color: white; padding: 10px; border: none; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>智慧出行卫士</h1>
+    <p>网页版加载中...（首次需等待10秒）</p>
+    
+    <script>
+        async function main() {
+            let pyodide = await loadPyodide();
+            await pyodide.loadPackage(["Pillow"]);
+            
+            // 替换为你的Python核心代码（简化版）
+            await pyodide.runPythonAsync(`
+                from PIL import Image
+                print("Python环境已加载！")
+            `);
+            
+            document.body.innerHTML = `
+                <h1>智慧出行卫士</h1>
+                <button onclick="alert('功能需进一步开发')">生成安全地图</button>
+                <p>完整功能正在适配网页版...</p>
+            `;
+        }
+        main();
+    </script>
+</body>
+</html>
